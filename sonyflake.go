@@ -2,8 +2,8 @@
 //
 // A Sonyflake ID is composed of
 //     39 bits for time in units of 10 msec
-//      8 bits for a sequence number
-//     16 bits for a machine id
+//     15 bits for a sequence number
+//     9 bits for a machine id
 package sonyflake
 
 import (
@@ -16,7 +16,7 @@ import (
 // These constants are the bit lengths of Sonyflake ID parts.
 const (
 	BitLenTime      = 39                               // bit length of time
-	BitLenSequence  = 8                                // bit length of sequence number
+	BitLenSequence  = 15                               // bit length of sequence number
 	BitLenMachineID = 63 - BitLenTime - BitLenSequence // bit length of machine id
 )
 
@@ -70,7 +70,8 @@ func NewSonyflake(st Settings) *Sonyflake {
 
 	var err error
 	if st.MachineID == nil {
-		sf.machineID, err = lower16BitPrivateIP()
+		// make you must set a machineId
+		return nil
 	} else {
 		sf.machineID, err = st.MachineID()
 	}
