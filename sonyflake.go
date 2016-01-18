@@ -183,6 +183,6 @@ func Decompose(id uint64) map[string]uint64 {
 	}
 }
 
-func Timestamp(id uint64) uint64 {
-	return id >> (BitLenSequence + BitLenMachineID)
+func HundredSecondNumber(id uint64) uint64 {
+	return id >> (BitLenSequence + BitLenMachineID + 4)
 }
