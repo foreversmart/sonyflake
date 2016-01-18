@@ -183,6 +183,7 @@ func Decompose(id uint64) map[string]uint64 {
 	}
 }
 
-func HundredSecondNumber(id uint64) uint64 {
-	return id >> (BitLenSequence + BitLenMachineID + 4)
+// a unit is 2 ^ 13 * 10 ms
+func SplitUnitNumber(id uint64) uint64 {
+	return id >> (BitLenSequence + BitLenMachineID + 13)
 }
