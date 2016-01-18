@@ -165,11 +165,11 @@ func lower16BitPrivateIP() (uint16, error) {
 	return uint16(ip[2])<<8 + uint16(ip[3]), nil
 }
 
+const maskSequence = uint64((1<<BitLenSequence - 1) << BitLenMachineID)
+const maskMachineID = uint64(1<<BitLenMachineID - 1)
+
 // Decompose returns a set of Sonyflake ID parts.
 func Decompose(id uint64) map[string]uint64 {
-	const maskSequence = uint64((1<<BitLenSequence - 1) << BitLenMachineID)
-	const maskMachineID = uint64(1<<BitLenMachineID - 1)
-
 	msb := id >> 63
 	time := id >> (BitLenSequence + BitLenMachineID)
 	sequence := id & maskSequence >> BitLenMachineID
@@ -181,4 +181,8 @@ func Decompose(id uint64) map[string]uint64 {
 		"sequence":   sequence,
 		"machine-id": machineID,
 	}
+}
+
+func Timestamp(id uint64) uint64 {
+	return id >> (BitLenSequence + BitLenMachineID)
 }
