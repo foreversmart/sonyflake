@@ -106,10 +106,26 @@ func (sf *Sonyflake) NextID() (uint64, error) {
 	return sf.toID()
 }
 
+// FakeId generates a next unique ID.
+// After the Sonyflake time overflows, NextID returns an error.
+func (sf *Sonyflake) FakeId(current time.Time, counter int32) (uint64, error) {
+	const maskSequence = uint16(1<<BitLenSequence - 1)
+
+	currentStamp := elapsedTime(current, sf.startTime)
+
+	return uint64(currentStamp)<<(BitLenSequence+BitLenMachineID) |
+		uint64(counter)<<BitLenMachineID |
+		uint64(sf.machineID), nil
+}
+
 const sonyflakeTimeUnit = 1e7 // nsec, i.e. 10 msec
 
 func toSonyflakeTime(t time.Time) int64 {
 	return t.UTC().UnixNano() / sonyflakeTimeUnit
+}
+
+func elapsedTime(current time.Time, startTime int64) int64 {
+	return toSonyflakeTime(current) - startTime
 }
 
 func currentElapsedTime(startTime int64) int64 {
