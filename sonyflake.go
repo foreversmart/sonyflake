@@ -108,14 +108,18 @@ func (sf *Sonyflake) NextID() (uint64, error) {
 
 // FakeId generates a next unique ID.
 // After the Sonyflake time overflows, NextID returns an error.
-func (sf *Sonyflake) FakeId(current time.Time, counter int32) (uint64, error) {
+func (sf *Sonyflake) FakeId(current time.Time, machineId uint16, counter int32) (uint64, error) {
+	if machineId > (1<<9)-1 {
+		return 0, errors.New("machine id overflow")
+	}
+
 	const maskSequence = uint16(1<<BitLenSequence - 1)
 
 	currentStamp := elapsedTime(current, sf.startTime)
 
 	return uint64(currentStamp)<<(BitLenSequence+BitLenMachineID) |
 		uint64(counter)<<BitLenMachineID |
-		uint64(sf.machineID), nil
+		uint64(machineId), nil
 }
 
 const sonyflakeTimeUnit = 1e7 // nsec, i.e. 10 msec
