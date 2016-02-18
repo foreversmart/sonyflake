@@ -122,6 +122,13 @@ func (sf *Sonyflake) FakeId(current time.Time, machineId uint16, counter int32) 
 		uint64(machineId), nil
 }
 
+// get a seq id without machine info
+func (sf *Sonyflake) SeqId(id uint64) uint64 {
+	tempMap := Decompose(id)
+	return tempMap["time"]<<(BitLenSequence) |
+		tempMap["sequence"]
+}
+
 const sonyflakeTimeUnit = 1e7 // nsec, i.e. 10 msec
 
 func toSonyflakeTime(t time.Time) int64 {
