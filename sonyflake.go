@@ -122,6 +122,25 @@ func (sf *Sonyflake) FakeId(current time.Time, machineId uint16, counter int32) 
 		uint64(machineId), nil
 }
 
+// generates a unique ID through an exist id on other machine.
+func (sf *Sonyflake) NewFakeIdByMachine(id uint64, machineId uint16) (uint64, error) {
+	if machineId > (1<<9)-1 {
+		return 0, errors.New("machine id overflow")
+	}
+
+	if id == 0 {
+		return 0, nil
+	}
+
+	tempMap := Decompose(id)
+	currentStamp := tempMap["time"]
+	counter := tempMap["sequence"]
+
+	return uint64(currentStamp)<<(BitLenSequence+BitLenMachineID) |
+		uint64(counter)<<BitLenMachineID |
+		uint64(machineId), nil
+}
+
 // get a seq id without machine info
 func (sf *Sonyflake) SeqId(id uint64) uint64 {
 	tempMap := Decompose(id)
